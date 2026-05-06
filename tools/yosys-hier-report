@@ -1,0 +1,136 @@
+#!/usr/bin/env python3
+
+import click
+import re
+
+tech_standard_cell_area = 1666600 # um2 (from 680 with 100% utilization)
+tech_gate_count = 11052987 # from yosys gate count of 680
+tech_um2_per_gate = tech_standard_cell_area / tech_gate_count
+tech_default_utilization = 0.5
+
+def um2_per_gate( gates ):
+    return gates * tech_um2_per_gate / tech_default_utilization
+
+
+_module = re.compile(r"^\s*module\s+(\w+).*$")
+_inst = re.compile(r"^\s*(\w+)\s*(\w+).*$")
+
+
+def read(files):
+    lines = []
+    for name in files:
+        with open(name, "r") as fh:
+            lines += fh.readlines()
+    return lines
+
+
+def parse(lines):
+    modules = {}
+    instantiated = {}
+    for line in lines:
+        if m := _module.match(line):
+            modules[m[1]] = []
+    module = None
+    for line in lines:
+        if m := _module.match(line):
+            module = m[1]
+            inst = modules[module]
+        elif m := _inst.match(line):
+            if m[1] in modules:
+                inst.append((m[2], m[1]))
+                instantiated[m[1]] = True
+    tops = [x for x in modules if not x in instantiated]
+    return modules, tops
+
+
+def hierarchy(modules, iname, mname, indent=""):
+    instances = modules[mname]
+    this_area = hierarchy.instance_area.get( mname, 0 )
+    area = this_area
+    sub_lines = []
+    for i, m in instances:
+        l,sub_area = hierarchy(modules, i, m, indent + "     ")
+        sub_lines += l
+        area += sub_area
+
+    perc = 100.0 * area / hierarchy.tot_area
+    mm2 = um2_per_gate( area ) / 1e6
+    this = [f"{indent}{iname} ({mname}) {this_area} {area} {mm2:3.1f} {perc:2.1f}"]
+    return this + sub_lines, area
+
+hierarchy.instance_area = {}
+hierarchy.tot_area = 0
+
+def parse_summary( summary ):
+    lines = read([summary])
+    inst = re.compile(r"^'\\(.*)'\s+(\d+) gates")
+    instance_area = {}
+    for line in lines:
+        if m := inst.match( line ):
+            #print(f"i:{m[1]} g:{m[2]}")
+            instance_area[ m[1] ] = int(m[2])
+        if line.startswith("Total area"):
+            m = re.search(r' (\d+) gate equiv',line)
+            tot_area = int( m[1] ) 
+    return tot_area, instance_area
+
+
+def print_aligned(lines,thresh):
+    processed_lines = []
+    
+    for line in lines:
+        # Capture leading whitespace
+        leading_space = len(line) - len(line.lstrip())
+        prefix = line[:leading_space]
+        
+        # Process the rest
+        parts = line.strip().split()
+        if len(parts) >= 4:
+            name = ' '.join(parts[:-4])
+            values = parts[-4:]
+            if float(values[3]) >= thresh:
+                processed_lines.append((prefix, name, values[0], values[1], values[2], values[3]))
+    
+    # Find maximum width for name and first value column
+    max_name_width = max(len(line[1])+len(line[0]) for line in processed_lines)
+    max_val1_width = max(len(line[2]) for line in processed_lines)
+    max_mm2_width = 4
+    
+    # Print aligned output
+    max_val1_width = max( len("hierachical"), max_val1_width )
+    for n,val1,val2,mm2,val3 in [ ("hierarchy", "instance", "hierachical", "hierarchical", "" ),
+                              ("",          "area",     "area",        "area",         "" ),
+                              ("",          "[gates]",  "[gates]",     "[mm2]",        "[percent]")]:
+        print(f"{n.ljust(max_name_width)}  {val1.center(max_val1_width)}  {val2.center(max_val1_width)} {mm2.center(max_mm2_width)} {val3.center(max_val1_width)}")
+
+    for prefix, name, val1, val2, mm2, val3 in processed_lines:
+        n = prefix + name
+        print(f"{n.ljust(max_name_width)}  {val1.rjust(max_val1_width)}  {val2.rjust(max_val1_width)} {mm2.rjust(max_mm2_width)} {val3.rjust(max_val1_width)}")
+        #print(f">{prefix}>{name}<")
+
+@click.command()
+@click.option("--top", "-t", default=None, help="Top module")
+@click.option("--summary", "-s", default=None, help="Yosys summary report.")
+@click.option("--thresh", "-h", default="0.0", help="Report only instances above this threshold.")
+@click.option("--util", "-u", default="0.5", help="Standard cell utilization, 0.7 means cell area is 70% and 30% is routing.")
+@click.argument("files", nargs=-1)
+
+def command(top, summary, thresh, util, files):
+    """Report RTL hierarchy"""
+    tot_area, instance_area = parse_summary( summary )
+    hierarchy.instance_area.update( instance_area )
+    hierarchy.tot_area = tot_area
+    global tech_default_utilization
+    tech_default_utilization = float( util ) 
+
+    code = read(files)
+    modules, tops = parse(code)
+    if top:
+        tops = [top]
+    for t in tops:
+        lines, area = hierarchy(modules, t, t)
+        print_aligned( lines, float(thresh) )
+        #for line in lines:
+        #    print(line)
+
+command()
