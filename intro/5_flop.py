@@ -1,5 +1,6 @@
 from myhdl import (
     Simulation,
+    Cosimulation,
     traceSignals,
     toVerilog,
     always_comb,
@@ -11,13 +12,13 @@ from myhdl import (
 from modules.common.signal import signal
 from modules.common.Common import sflop
 from intro_common import clock_reset_generator
+import os
 
+# Here the DUT is replace with a Icarus simulator of the DUT.
+# The testbench is the sane only the content of the DUT is replaced.
 def first_flop(i,o,clk):
-
-    @always(clk.posedge)
-    def ff():
-        o.next = i
-    return instances()
+    cosim = Cosimulation("vvp -m ../myhdl/cosimulation/icarus/myhdl.vpi dut.o -fst-speed", **locals())
+    return cosim
 
 def test_bench():
 
@@ -43,20 +44,7 @@ def test_bench():
 
     return instances()
 
-traceSignals.filename = 'trace'
-wave_tb = traceSignals( test_bench ) 
-sim = Simulation(wave_tb)
+os.system("iverilog -g2005-sv -o dut.o first_flop.v tb_first_flop.v")
+
+sim = Simulation( test_bench() )
 sim.run(100)
-
-
-clk        = signal()
-sync_rstn  = signal()
-state      = signal(2)
-next_state = signal(2)
-
-toVerilog.standard = 'systemverilog'
-toVerilog.trace = True
-toVerilog.trace_file = "trace"
-toVerilog.trace_format = "fst"
-itop = toVerilog( first_flop, next_state, state, clk )
-

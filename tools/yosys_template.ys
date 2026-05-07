@@ -34,3 +34,4 @@ splitnets -ports; opt
 stat -liberty STDCELLLIB TOP_INSTANCE
 
 write_verilog OUT
+write_json JSON

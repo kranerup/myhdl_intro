@@ -3,7 +3,6 @@ from myhdl import (
     traceSignals,
     toVerilog,
     always_comb,
-    always,
     instance,
     delay,
     instances
@@ -11,13 +10,6 @@ from myhdl import (
 from modules.common.signal import signal
 from modules.common.Common import sflop
 from intro_common import clock_reset_generator
-
-def first_flop(i,o,clk):
-
-    @always(clk.posedge)
-    def ff():
-        o.next = i
-    return instances()
 
 def test_bench():
 
@@ -28,7 +20,8 @@ def test_bench():
 
     cgen = clock_reset_generator( clk, sync_rstn )
 
-    dut = first_flop( i=next_state, o=state, clk=clk )
+    # instead of the handcrafted flipflop we now use a flop from the common library
+    dut = sflop( i=next_state, o=state, clk_en=None, clk=clk, sync_rstn=sync_rstn )
 
     @instance
     def stimuli():
@@ -55,8 +48,5 @@ state      = signal(2)
 next_state = signal(2)
 
 toVerilog.standard = 'systemverilog'
-toVerilog.trace = True
-toVerilog.trace_file = "trace"
-toVerilog.trace_format = "fst"
-itop = toVerilog( first_flop, next_state, state, clk )
+itop = toVerilog( sflop, next_state, state, None, clk, sync_rstn )
 

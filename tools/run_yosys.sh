@@ -23,6 +23,7 @@ vlog_lib=(
 
 synt_script=$repo_root/tools/yosys_template.ys
 output_file="synt.v"
+json_file="synt.json"
 output_dir=$repo_root/output/yosys
 td=10000
 
@@ -225,6 +226,7 @@ if ((! report )); then
     -e "s|STDCELLLIB|${stdcells}|g" \
     -e "s|CONSTRAINTS|${stdcell_constraints}|g" \
     -e "s|OUT|$output_file|g" \
+    -e "s|JSON|$json_file|g" \
     < $synt_script  | \
   awk "/READ_VERILOG/ {print \"${read_vlog}\"; next} {print}" > $output_dir/run.ys
   
@@ -285,8 +287,9 @@ __END__
 
   
   if ((top_flow==0)); then
-    delay=$(grep "Extracting gate netlist of module\|ABC:.*Delay =" run.log | sed -e 's/.*Delay =\s*//' -e 's/ ps.*/ ps/' -e 's/.*of module*//' -e 's/ to .*//')
-    printf "\nworst delay path:\n$delay" | tee -a summary.rpt
+    printf "\nworst delay path:\n" | tee -a summary.rpt
+    grep "Extracting gate netlist of module\|ABC:.*Delay =" run.log | sed -e 's/.*Delay =\s*//' -e 's/ ps.*/ ps/' -e 's/.*of module*//' -e 's/ to .*//' | tee -a summary.rpt
+    #printf "\nworst delay path:\n$delay" | tee -a summary.rpt
     printf "\n" | tee -a summary.rpt
     printf "\n" | tee -a summary.rpt
     echo output in $output_dir

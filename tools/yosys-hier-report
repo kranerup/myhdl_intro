@@ -62,10 +62,13 @@ hierarchy.instance_area = {}
 hierarchy.tot_area = 0
 
 def parse_summary( summary ):
+    print("================== parse summary ====================")
     lines = read([summary])
     inst = re.compile(r"^'\\(.*)'\s+(\d+) gates")
     instance_area = {}
+    tot_area = None
     for line in lines:
+        print("LINE",line)
         if m := inst.match( line ):
             #print(f"i:{m[1]} g:{m[2]}")
             instance_area[ m[1] ] = int(m[2])
@@ -118,6 +121,8 @@ def print_aligned(lines,thresh):
 def command(top, summary, thresh, util, files):
     """Report RTL hierarchy"""
     tot_area, instance_area = parse_summary( summary )
+    if tot_area is None:
+        exit(0) # no hierachy so exit
     hierarchy.instance_area.update( instance_area )
     hierarchy.tot_area = tot_area
     global tech_default_utilization

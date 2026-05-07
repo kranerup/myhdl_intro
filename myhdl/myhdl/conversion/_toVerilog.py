@@ -125,6 +125,8 @@ class _ToVerilogConvertor(object):
                  "dirmap",
                  "top_name",
                  "filename",
+                 "trace_file",
+                 "trace_format",
                  )
 
     def __init__(self):
@@ -141,6 +143,8 @@ class _ToVerilogConvertor(object):
         self.trace = False
         self.initial_values = False
         self.filename = None
+        self.trace_file = None
+        self.trace_format = "vcd"
 
     def __call__(self, func, *args, **kwargs):
         global _converting
@@ -523,7 +527,11 @@ def _writeTestBench(f, intf, trace=False):
     print(file=f)
     print("initial begin", file=f)
     if trace:
-        print('    $dumpfile("%s.vcd");' % intf.name, file=f)
+        dfile = toVerilog.trace_file
+        if dfile is None:
+            dfile = intf.name
+        dfile = f"{dfile}.{toVerilog.trace_format}"
+        print('    $dumpfile("%s");' % dfile, file=f)
         print('    $dumpvars(0, dut);', file=f)
     if fr.getvalue():
         print("    $from_myhdl(", file=f)
