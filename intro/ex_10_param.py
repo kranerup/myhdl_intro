@@ -51,7 +51,8 @@ def calculation( op_1, op_2, result, clk, reset ):
 
     # Notice that all the hardware components that we created above
     # have been assigned to local variables. This is necessary. Without
-    # these MyHDL will not work.
+    # these MyHDL will not work. This includes hardware signals.
+
     # The return here calls "instances" which takes all local variables
     # and figures out which of these are hardware an returns those.
     # Without this return there will be no hardware created
