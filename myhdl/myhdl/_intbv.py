@@ -26,6 +26,8 @@ from myhdl._bin import bin
 class intbv(object):
     # __slots__ = ('_val', '_min', '_max', '_nrbits', '_handleBounds')
 
+    disable_bounds = False # for example during reset illegal values are acceptable and should not assert the simulation
+
     def __init__(self, val=0, min=None, max=None, _nrbits=0):
         if _nrbits:
             self._min = 0
@@ -54,6 +56,7 @@ class intbv(object):
             _nrbits = val._nrbits
         else:
             raise TypeError("intbv constructor arg should be int or string")
+        #assert not ( self._min == 0 and self._max == 1 )
         self._nrbits = _nrbits
         self._handleBounds()
 
@@ -67,14 +70,15 @@ class intbv(object):
         return self._min
 
     def _handleBounds(self):
-        if self._max is not None:
-            if self._val >= self._max:
-                raise ValueError("intbv value %s >= maximum %s" %
-                                 (self._val, self._max))
-        if self._min is not None:
-            if self._val < self._min:
-                raise ValueError("intbv value %s < minimum %s" %
-                                 (self._val, self._min))
+        if not self.disable_bounds:
+            if self._max is not None:
+                if self._val >= self._max:
+                    raise ValueError("intbv value %s >= maximum %s (min:%s bits:%d)" %
+                                     (self._val, self._max, self._min, self._nrbits))
+            if self._min is not None:
+                if self._val < self._min:
+                    raise ValueError("intbv value %s < minimum %s" %
+                                     (self._val, self._min))
 
     def _hasFullRange(self):
         min, max = self._min, self._max

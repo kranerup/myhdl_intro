@@ -530,7 +530,18 @@ class _AnalyzeVisitor(ast.NodeVisitor, _ConversionMixin):
                 _enumTypeSet.add(obj)
                 suf = _genUniqueSuffix.next()
                 obj._setName(n + suf)
+        # Member access of a vector/list item is not supported but
+        # could be identified here. But this isn't enough. The list
+        # with structs must be identified elsewhere so that it is
+        # treated like a list of signals.
+        #if isinstance(node.value, ast.Subscript):
+        #    print("SUBSCRIPT",node.value,node.value.value)
+        #    print("id",node.value.value.id)
+        #    n = node.value.value.id
+        #    print("dicts",n in self.tree.vardict, n in self.tree.symdict)
         if node.obj is None:  # attribute lookup failed
+            # ast.Attribute, ast.Subscript, False .name
+            print("ERROR",node,node.value,node.value.obj,node.attr)
             self.raiseError(node, _error.UnsupportedAttribute, node.attr)
 
     def visit_Assign(self, node):

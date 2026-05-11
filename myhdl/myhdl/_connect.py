@@ -11,7 +11,7 @@ def _flatten(s, lst):
     if isinstance(s, (list, tuple)):
         for x in s:
             _flatten(x, lst)
-    else:
+    elif s is not None:
         lst.append(s)
     return lst
 

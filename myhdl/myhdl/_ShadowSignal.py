@@ -147,7 +147,7 @@ class ConcatSignal(_ShadowSignal):
     __slots__ = ('_args', '_sigargs', '_initval')
 
     def __init__(self, *args):
-        assert len(args) >= 2
+        assert len(args) >= 1
         self._args = args
         self._sigargs = sigargs = []
 

@@ -158,19 +158,15 @@ class _ConversionMixin(object):
             self.visit(n)
 
 
-def _LabelGenerator():
-    i = 1
-    while 1:
-        yield "MYHDL%s" % i
-        i += 1
-
-_genLabel = _LabelGenerator()
+_labels = {}
 
 
 class _Label(object):
 
     def __init__(self, name):
-        self.name = next(_genLabel) + '_' + name
+        i = _labels.get(name, 0)
+        self.name = f"MYHDL{i}_{name}"
+        _labels[name] = i + 1
         self.isActive = False
 
     def __str__(self):

@@ -245,7 +245,11 @@ class _Signal(object):
     def next(self, val):
         if isinstance(val, _Signal):
             val = val._val
-        self._setNextVal(val)
+        try:
+            self._setNextVal(val)
+        except ValueError as e:
+            print(self.__dict__)
+            raise ValueError(f"{self._name}: {str(e)}")
         _siglist.append(self)
 
     # support for the 'posedge' attribute
