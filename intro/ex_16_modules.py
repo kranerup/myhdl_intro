@@ -6,28 +6,34 @@ from intro_common import clock_reset_generator
 #@module
 def do_mul(op,result,clk,reset,nr_mul):
 
+    # This will be a Verilog 'function' which is limited
+    # to having a single return value of type integer.
+    # And integer in Verilog is 32 bits signed. This makes
+    # it harder to use functions.
+    def normal_function( a, b ):
+        tmp = a + 33
+        return a + b + tmp
+
+    # Inline decorator makes function that can be called in
+    # always blocks. They do not have a return value so
+    # they can not be called inside expressions.
     @inline
-    def prep_input(op,i):
-        return op + i
+    def assignable( res, a, b ):
+        tmp = modbv(0)[10:]
+        tmp[:] = a << 2 
+        res.next = a + b + 123 + tmp # it is allowed to assign to signals
 
     @always_seq(clk.posedge,reset=reset)
     def mul():
         collect = modbv(0)[16:]
         for i in range(nr_mul):
-            mmm = modbv(0)[16:]
-            mmm[:] = prep_input(op,i)
-            collect[:] += mmm * op
-        result.next = collect
+            collect[:] = normal_function( collect, op )
+        assignable( result, collect, op )
+        #result.next = collect
+
     return instances()
 
 def calculation( op, result, clk, reset, nr_mul ):
-
-    #mul_in = [ signal(8) for _ in range(nr_mul) ]
-    #iinputs = []
-
-    #for i in range(nr_mul):
-    #    add_val = i
-    #    iinputs.append( prep_input( op, mul_in[i], add_val, clk, reset ))
 
     imul = do_mul( op, result, clk, reset, nr_mul )
 
