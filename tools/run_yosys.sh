@@ -206,10 +206,7 @@ if ((! report )); then
       true;
     elif [[ -e $f ]]; then
       read_vlog+="read_verilog -sv $f\n"
-      if grep -q 'disable MYHDL' $f; then
-        echo verilog file $f contains function disable. Patch file with scripts/remove_function_disable.pl
-        exit 2
-      fi
+      sed -i -E '/disable +MYHDL[0-9]+_RETURN/d' $f
     else
       echo verilog file $f doesnt exist
       exit 2
