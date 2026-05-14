@@ -5,6 +5,7 @@ from intro_common import clock_reset_generator
 
 class Params:
     has_adder = False
+    add_value = 33
 
 from ex_9_calc import adder, multiplier
 
@@ -39,7 +40,7 @@ def calculation( op_1, op_2, result, clk, reset ):
     # compile time parameters (#ifdef) in C.
     if Params.has_adder:
         cnst = copySignal( op_1 )
-        icnst = assign_const( cnst, 33 )
+        icnst = assign_const( cnst, Params.add_value )
         iadder_2 = adder( cnst, mul_res, result, clk, reset )
     else:
         # Since there is no adder we need to connect the multiplier

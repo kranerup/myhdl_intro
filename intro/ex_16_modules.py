@@ -3,7 +3,7 @@ from modules.common.signal import signal
 from modules.common.Common import sflop, copySignal, pass_through, assign_const
 from intro_common import clock_reset_generator
 
-#@module
+@module
 def do_mul(op,result,clk,reset,nr_mul):
 
     # This will be a Verilog 'function' which is limited
