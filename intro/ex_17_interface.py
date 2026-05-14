@@ -18,7 +18,7 @@ class APB:
         self.prdata = signal(dwidth)
         self.pslverr = signal()
 
-# A trivial APB slave that listens for the APB write transaction
+# A minimal APB slave that listens for the APB write transaction
 # and if the address matches it outputs the value written.
 def apb_slave(bus,out,clk,reset):
 
