@@ -1,37 +1,31 @@
 echo on
 READ_VERILOG
 hierarchy -check TOP_INSTANCE LIBDIR
-#write_verilog s0.v
 
 # high-level synthesis
 setattr -unset always_comb p:*
 #proc;
 proc_clean
 proc_rmdead
-#write_verilog s1.v
-#quit
 proc_init
-#write_verilog s2.v
-#exit
 proc_arst
 proc_mux
-#write_verilog s3.v
 #proc_dlatch
 proc_dff
 proc_clean
-#write_verilog s4.v
 
 opt; fsm; opt; memory; opt
 
 techmap; opt
-dfflibmap -liberty STDCELLLIB
-#abc -constr CONSTRAINTS -dff -liberty STDCELLLIB -D TARGETDELAY
-abc -constr CONSTRAINTS -liberty STDCELLLIB -D TARGETDELAY
 
+abc
 # split larger signals
 splitnets -ports; opt
+write_json JSON
+
+dfflibmap -liberty STDCELLLIB
+abc -constr CONSTRAINTS -liberty STDCELLLIB -D TARGETDELAY
 
 stat -liberty STDCELLLIB TOP_INSTANCE
 
 write_verilog OUT
-write_json JSON
