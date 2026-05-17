@@ -1,0 +1,17 @@
+This is an introduction to the MyHDL hardware description language.
+It is based on a number of examples that illustrates many important
+aspects of MyHDL. The idea is to go through the examples in number order
+and read all the comments in the example. Run the examples and view
+the output from them.
+
+Prerequisites are that you install these packages:
+Must install:
+  python3
+  gtkwave
+Recommended:
+  yosys
+  iverilog
+  netlistsvg (intall npm then: npm install -g netlistsvg)
+
+The examples are in the intro directory.
+
