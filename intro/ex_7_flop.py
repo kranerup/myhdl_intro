@@ -41,6 +41,7 @@ def test_bench():
 
     return instances()
 
+# -----------------------------------------------
 if __name__ == "__main__":
     traceSignals.filename = 'trace'
     wave_tb = traceSignals( test_bench ) 
