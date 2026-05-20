@@ -1,8 +1,20 @@
-This is an introduction to the MyHDL hardware description language.
-It is based on a number of examples that illustrates many important
-aspects of MyHDL. The idea is to go through the examples in number order
-and read all the comments in the example. Run the examples and view
-the output from them.
+This is an introduction to the MyHDL hardware description language. The focus
+is on writing synthesizable hardware. The introduction is based
+on a number of examples that illustrates many important aspects of MyHDL. The
+idea is that you should go through the examples in number order and read all
+the comments in the examples. Run the examples and view the output from them.
+
+MyHDL is just a Python library. A basic understanding of Python is enough
+to use it.
+
+MyHDL creates Verilog code and writing MyHDL requires some understanding of
+Verilog hardware design. This introduction assumes that you are already
+familiar with that. If not I can recommend 'FPGA Prototyping by Verilog
+Examples: Xilinx Spartan-3 Version Book by Pong Chu' which you can find online.
+
+MyHDL and Python is a very powerfull combination for writing testbenches but
+that is not the focus of this introduction. On myhdl.org you can find more
+about this as well as more detailed documentation about MyHDL.
 
 Prerequisites are that you install these packages:
 Must install:
