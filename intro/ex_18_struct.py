@@ -4,7 +4,7 @@ from modules.common.Common import sflop, copySignal, pass_through, assign_const
 from intro_common import clock_reset_generator
 
 # A MyHDL Struct is similar to an interface but it has helper
-# functions that allows packing/unpacking the stuct members
+# functions that allows packing/unpacking the struct members
 # to/from a single signal.
 # A struct can also contain structs recursively.
 class S(Struct):

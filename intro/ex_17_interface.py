@@ -32,7 +32,8 @@ def apb_slave(bus,out,clk,reset):
         
     return instances()
 
-
+# Note that this example only connects a few of the APB bus signals
+# and therefore the MyHDL conversion will warn of undriven signal.
 def generate_verilog():
     clk   = signal()
     reset = ResetSignal(0, active=0, isasync=False)

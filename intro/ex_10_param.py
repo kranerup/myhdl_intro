@@ -61,12 +61,14 @@ def calculation( op_1, op_2, result, clk, reset ):
     # Without this return there will be no hardware created
     return instances()
 
-clk   = signal()
-in1   = signal(8)
-in2   = signal(8)
-res   = signal(16)
-reset = ResetSignal(0, active=0, isasync=False)
 
-toVerilog.standard = 'systemverilog'
-itop = toVerilog( calculation, in1, in2, res, clk, reset )
+if __name__ == "__main__":
+    clk   = signal()
+    in1   = signal(8)
+    in2   = signal(8)
+    res   = signal(16)
+    reset = ResetSignal(0, active=0, isasync=False)
+
+    toVerilog.standard = 'systemverilog'
+    itop = toVerilog( calculation, in1, in2, res, clk, reset )
 

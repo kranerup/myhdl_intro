@@ -3,6 +3,14 @@ from modules.common.signal import signal
 from modules.common.Common import sflop, copySignal, pass_through, assign_const
 from intro_common import clock_reset_generator
 
+# Examples of Verilog functions, inline MyHDL functions
+# and Verilog modules.
+
+# This decorator will make MyHDL create a Verilog module.
+# When do_mul is used in the calculation function below it
+# will become an instantiation of this module. The name
+# of the file and the Verilog module is pa_<func-name>_<hash>
+# This is to create unique/conflict-free names.
 @module
 def do_mul(op,result,clk,reset,nr_mul):
 

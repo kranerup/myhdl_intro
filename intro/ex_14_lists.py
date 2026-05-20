@@ -23,6 +23,11 @@ def do_mul(op,m_in,result,clk,reset):
         result.next = collect
     return instances()
 
+# This illustrates how to create blocks in a loop and connect
+# to a signal list. Also we're using @block which is a newer
+# MyHDL construct that allows the new .convert() method that
+# you can see below. Unfortunately it is not compatible with
+# all MyHDL features.
 @block
 def calculation( op, result, clk, reset ):
 
@@ -49,6 +54,7 @@ def generate_verilog():
     res   = signal(16)
     reset = ResetSignal(0, active=0, isasync=False)
 
+    # The new conversion method.
     itop = calculation( op, res, clk, reset )
     itop.convert()
 

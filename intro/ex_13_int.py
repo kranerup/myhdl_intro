@@ -7,9 +7,10 @@ def calculation( op, result, clk, reset ):
 
     @always_seq(clk.posedge,reset=reset)
     def the_calc():
-        # A local variable that is neither Signal, intbv, modbv will be an
+        # A local variable that is neither Signal, intbv nor modbv will be an
         # integer, In verilog "integer" is a 32 bit signed type but in
-        # python/myhdlsim it's arbitrary precision.
+        # python/myhdlsim it's arbitrary precision. If you are not careful
+        # you will end up with different behavior.
         # A normal assign (not .next or [:]) is used for integers.
         i = op + 2 # Note it's ok to mix hardware signals (op) with integers,
         i += 12

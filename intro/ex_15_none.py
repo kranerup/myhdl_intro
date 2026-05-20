@@ -3,6 +3,9 @@ from modules.common.signal import signal
 from modules.common.Common import sflop, copySignal, pass_through, assign_const
 from intro_common import clock_reset_generator
 
+# This illustrates how MyHDL interface/blocks can be parameterized
+# so that they can handle that some ports aren't connected. 
+
 # If the 'i' input is None, meaning it's not connected then
 # instead of doing the addition we just connect input to output.
 def prep_input(op,m_in,i,clk,reset):

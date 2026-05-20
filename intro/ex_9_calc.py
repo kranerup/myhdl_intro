@@ -19,34 +19,37 @@ def multiplier( op_a, op_b, out, clk, reset ):
 
 def calculation( op_1, op_2, result, clk, reset ):
 
-    # Here we need local signals to interconnect added and multiplier.
-    # By using copySignal we don't need to know thw width of the signals.
-    add_res = copySignal(op_1)
+    # Here we need local signals to interconnect adder and multiplier.
+    # By using copySignal we don't need to know the width of the signals.
+    add_res = copySignal(op_1) # makes a signal with the same width as op_1.
     iadder = adder( op_1, op_2, add_res, clk, reset)
 
     # The multiplication result will require 2x the number of bits of
     # the operands.
     mul_res = signal( len(op_1) * 2 )
-    # Note that passing a constant will not always be allowed. If the
-    # function does operations that are only available for Signal type.
+    # Note that we pass 12 as one operand but a constant will not always be
+    # allowed. For example if the function does operations that are only
+    # available for Signal type.
     imul = multiplier( 12, add_res, mul_res, clk, reset )
 
-    # here we create a constant signal,
+    # We're outside of @always and here you can't directly assign a value
+    # to a signal. Here we create a constant signal and give it a value.
     cnst = copySignal( op_1 )
     icnst = assign_const( cnst, 33 )
     iadder_2 = adder( cnst, mul_res, result, clk, reset )
 
     return instances()
 
-clk   = signal()
-in1   = signal(8)
-in2   = signal(8)
-res   = signal(16)
-reset = ResetSignal(0, active=0, isasync=False)
+if __name__ == "__main__":
+    clk   = signal()
+    in1   = signal(8)
+    in2   = signal(8)
+    res   = signal(16)
+    reset = ResetSignal(0, active=0, isasync=False)
 
-toVerilog.standard = 'systemverilog'
-toVerilog.trace = True
-toVerilog.trace_file = "trace"
-toVerilog.trace_format = "fst"
-itop = toVerilog( calculation, in1, in2, res, clk, reset )
+    toVerilog.standard = 'systemverilog'
+    toVerilog.trace = True
+    toVerilog.trace_file = "trace"
+    toVerilog.trace_format = "fst"
+    itop = toVerilog( calculation, in1, in2, res, clk, reset )
 
