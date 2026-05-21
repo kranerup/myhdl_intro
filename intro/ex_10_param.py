@@ -15,7 +15,7 @@ def calculation( op_1, op_2, result, clk, reset ):
     # functions (@always_seq,always_comb...) and all other code.
     #
     # Inside decorated functions the code will be directly translated
-    # to verilog and only python code that have a direct corresponande in
+    # to verilog and only python code that have a direct correspondance in
     # verilog will be allowed.
     #
     # But when outside decorated functions any Python code is allowed. You can

@@ -22,6 +22,10 @@ def calculation( op_1, op_2, result, clk, reset ):
     # Here we need local signals to interconnect adder and multiplier.
     # By using copySignal we don't need to know the width of the signals.
     add_res = copySignal(op_1) # makes a signal with the same width as op_1.
+
+    # Here we call 'adder' which is a function that creates hardware.
+    # The result must always be assigned to a variable or a list
+    # else MyHDL can not find the hardware.
     iadder = adder( op_1, op_2, add_res, clk, reset)
 
     # The multiplication result will require 2x the number of bits of
