@@ -1,3 +1,4 @@
+# Runs the cosimulation of the verilog produced by ex_12_assign.
 from myhdl import *
 from modules.common.signal import signal
 from modules.common.Common import sflop, copySignal, pass_through, assign_const

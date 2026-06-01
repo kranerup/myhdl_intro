@@ -1,3 +1,5 @@
+# This creates the verilog output but doesn't
+# run the simulation. Run this first then run ex_12_cosim.py for simulation.
 from myhdl import *
 from modules.common.signal import signal
 from modules.common.Common import sflop, copySignal, pass_through, assign_const

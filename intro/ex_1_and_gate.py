@@ -3,7 +3,7 @@
 # After reading through the code and running it
 # then you can run synthesis to create the gate-level
 # implementation.
-# ../tools/run_yosys and_gate.v
+# ../tools/run_yosys.sh and_gate.v
 # See the result in ../output/yosys_and_gate/synt.v
 # A schematic view of the gate level implementation can be created with:
 # netlistsvg ../output/yosys_and_gate/synt.json
