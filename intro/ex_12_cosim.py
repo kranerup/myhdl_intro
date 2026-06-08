@@ -1,4 +1,8 @@
 # Runs the cosimulation of the verilog produced by ex_12_assign.
+# Before running this the first time you must have Icarus
+# verilog simulator installed. You must also compile the cosim
+# code: cd ../myhdl/cosimulation/icarus; make
+
 from myhdl import *
 from modules.common.signal import signal
 from modules.common.Common import sflop, copySignal, pass_through, assign_const
